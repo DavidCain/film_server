@@ -47,7 +47,12 @@ def get_clip_dict(csv_file, give_times=False):
         start, end, name = line
         timename = "%s-%s" % (start, end)
         clip_name = "%s - %s" % (timename, name) if give_times else name
-        clip_dict[get_time(start)] = (get_time(end), clip_name)
+
+        start_time = get_time(start)
+        end_time = get_time(end)
+        if end_time < start_time:
+            raise CSVError("End time of '%s' (line %i) precedes start." % (name, num))
+        clip_dict[start_time] = (end_time, clip_name)
     return clip_dict
 
 
@@ -72,6 +77,8 @@ def make_clips(clips, film_title):
 
     clip_files = []
     for start, (end, clip_name) in clips:
+        if seconds(end - start) > 600:
+            raise Exception("Clip '%s' exceeds ten minutes." % clip_name)
         running_time = str(end - start)  # Will be in HMS
         start = str(start)
         clip_fn = clean_path(clip_name)
@@ -207,7 +214,7 @@ def html_err(msg):
     print 'Content-Type:text/html\n'
     print "<html>\n<body>"
     print "<h1>Error:</h1>\n"
-    print "<p>\n" + msg + "\n</p>"
+    print "<p>\n%s\n</p>" % msg
     print "</body>\n</html>"
 
 
