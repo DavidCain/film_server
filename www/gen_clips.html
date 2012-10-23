@@ -20,19 +20,21 @@
             <td><i><a href="#create_csv">.csv file</a> with clip times</i></td>
         </tr>
         <tr>
-            <td>Title:</td>
-            <td><input type="text" name="title" value="East of Eden" /> </td>
-        </tr>
-
-        <tr>
-            <td>Movie file:</td>
+            <td>Film:</td>
             <td>
-                <input type="text" name="movie_path" value="/Users/suzieq/East_of_Eden.m4v" size="45"/>
-            </td>
-            <td>
-                <i>Absolute path to '.m4v' movie</i><br />
-                <!-- <a href="#path_caveat">How to make an m3u for the classroom computer.</a> -->
-            
+                <select name="title">
+                    <option value="Breaking_the_Waves">Breaking the Waves</option>
+                    <option value="Decalogue-Adultery">Decalogue-Adultery</option>
+                    <option value="Decalogue-Murder">Decalogue-Murder</option>
+                    <option value="East_of_Eden">East of Eden</option>
+                    <option value="Jesus_Christ_Superstar">Jesus Christ Superstar</option>
+                    <option value="Jesus_of_Montreal-en">Jesus of Montreal (English)</option>
+                    <option value="Jesus_of_Montreal-fr">Jesus of Montreal (French)</option>
+                    <option value="Jesus_of_Montreal-fr_subtitled">Jesus of Montreal (French, English subtitles)</option>
+                    <option value="Last_Temptation_of_Christ">Last Temptation of Christ</option>
+                    <option value="Passion_of_the_Christ">Passion of the Christ</option>
+                    <option value="The_Matrix">The_Matrix</option>
+                </select>
             </td>
         </tr>
 
@@ -48,8 +50,32 @@
         </tr>
 
         <tr>
-            <td colspan="2">
-                <input type="submit" value="Generate playlist" />
+            <td><b>Desired output</b></td>
+            <td>
+                <input type="radio" name="output_type" value="playlist" checked /> .m3u playlist <br />
+                <input type="radio" name="output_type" value="clips" /> Video clip files
+            </td>
+            <!--
+            <td><i>How to order the playlist (chronological will sort clips by start time)</i></td>
+            -->
+        </tr>
+
+        <tr>
+            <td>Movie file:</td>
+            <td>
+                <input type="text" name="movie_path" value="/Users/suzieq/East_of_Eden.m4v" size="45"/>
+            </td>
+            <td>
+                <i>Absolute path to '.m4v' movie</i><br />
+                <!-- <a href="#path_caveat">How to make an m3u for the classroom computer.</a> -->
+            
+            </td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" value="Generate" />
             </td>
         </tr>
     </table>
@@ -60,10 +86,13 @@
 <h2 id="about">About</h2>
 
 
-<p>The above form will generate a .m3u file that can be used to play film
-clips. The playlist contains named bookmarks that can be clicked to go to a
-specific time in the film. If you open the .m3u file in VLC, then open the
-bookmarks window, you will see a clickable list like in the image below.</p>
+<p>The above form can generate a .zip archive of movie clips, or a .m3u
+file that can be used to play film bookmarks in the full movie.</p>
+
+<p>The .m3u playlist contains named bookmarks that can be clicked to go to
+a specific time in the film. If you open the .m3u file in VLC, then open
+the bookmarks window, you will see a clickable list like in the image
+below.</p>
 
 <p> <img src="images/bookmarks.png" title="Bookmarks as viewed in VLC" \></p>
 
@@ -75,55 +104,26 @@ bookmarks window, you will see a clickable list like in the image below.</p>
         <a href="#create_csv">Create a CSV</a> with desired start time, end time, and titles per clip.
     </li>
     <li>
-        Upload your CSV.
+        Upload your CSV, fill in other form elements.
     </li>
     <li>
-        Give your film's title.
+        If electing for a playlist, give <a href="#full_path">the
+            absolute path to the movie</a> on whatever computer you want
+        to play the file on.
     </li>
     <li>
-        Give <a href="#full_path">the absolute path to the movie</a> on
-        whatever computer you want to play this file on.
-    </li>
-    <li>
-        Press "Generate playlist," and open the downloaded file in VLC or your
-        media player of choice.
-    </li>
-    <li>
-        Play the clips by clicking in the <a href=#bookmarks>Bookmarks</a>
-        window.
+    Press "Generate." A file will download.
+        <ul>
+            <li>
+                .m3u files can be opened with VLC by clicking in the <a
+                    href=#bookmarks>Bookmarks</a> window.
+            </li>
+            <li>
+            Video clips are saved in a .zip archive.
+            </li>
+        </ul>
     </li>
 </ol>
-
-<h3 id="bookmarks">The bookmarks window</h3>
-
-</p>To open the bookmarks display in VLC:</p>
-<p><b>Windows or GNU/Linux</b>: Playback -&gt; Custom Bookmarks </p>
-<p><b>Mac</b>: Window-&gt; Bookmarks, or &#8984; B </p>
-
-
-<h3 id="full_path">Getting the full path of a file</h3>
-
-<p><b>Windows</b>: On a Windows 7 machine, you can copy the full path of
-any file by right clicking, and selecting 'Copy Address as Text.'</p>
-<p><b>Mac</b>: Right click your file, and select 'Get Info'. The full
-path to the file can be found under the "Where:" field.</p>
-
-<p> Note that if you've been playing the movies directly in your web
-browser, this will not work for you. You need to download the film to
-your hard drive and give the path on your computer. </p>
-
-<h3 id="path_caveat">File not working on a different computer?</h3>
-
-<p> The m3u playlist points to a specific video file. If you try to open
-the playlist on a different computer, it will fail if there's no video at
-the path specified. To get an m3u that will not fail, you will need to
-provide the path of the video on that computer when generating the .m3u.
-
-For example, you can make a playlist that will run on the classroom's
-computer by specifying the movie file path as:
-<pre>/Users/classroom/Desktop/East_of_Eden.m4v</pre>
-(Substitute "East_of_Eden" with your video.) Then, simply download the
-.m4v to the classroom's Desktop, and your playlist should work. </p>
 
 <br />
 
@@ -162,6 +162,39 @@ spreadsheet in Excel, and export it as CSV.</p>
         warnings.</p>
     </li>
 </ol>
+
+<h2 id="playlist_info">Playlist help</h3>
+<h3 id="bookmarks">The bookmarks window</h3>
+
+</p>To open the bookmarks display in VLC:</p>
+<p><b>Windows or GNU/Linux</b>: Playback -&gt; Custom Bookmarks </p>
+<p><b>Mac</b>: Window-&gt; Bookmarks, or &#8984; B </p>
+
+
+<h3 id="full_path">Getting the full path of a file</h3>
+
+<p><b>Windows</b>: On a Windows 7 machine, you can copy the full path of
+any file by right clicking, and selecting 'Copy Address as Text.'</p>
+<p><b>Mac</b>: Right click your file, and select 'Get Info'. The full
+path to the file can be found under the "Where:" field.</p>
+
+<p> Note that if you've been playing the movies directly in your web
+browser, this will not work for you. You need to download the film to
+your hard drive and give the path on your computer. </p>
+
+<h3 id="path_caveat">File not working on a different computer?</h3>
+
+<p> The m3u playlist points to a specific video file. If you try to open
+the playlist on a different computer, it will fail if there's no video at
+the path specified. To get an m3u that will not fail, you will need to
+provide the path of the video on that computer when generating the .m3u.
+
+For example, you can make a playlist that will run on the classroom's
+computer by specifying the movie file path as:
+<pre>/Users/classroom/Desktop/East_of_Eden.m4v</pre>
+(Substitute "East_of_Eden" with your video.) Then, simply download the
+.m4v to the classroom's Desktop, and your playlist should work. </p>
+
 
 </body>
 </html>
