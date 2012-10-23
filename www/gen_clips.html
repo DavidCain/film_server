@@ -1,0 +1,167 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Style-Type" content="text/css" />
+    <meta name="author" content="David Cain" />
+    <title></title>
+    <link rel="stylesheet" href="wiki.css" type="text/css" />
+</head>
+<body>
+
+<h1>Film clip generator</h1>
+
+<form action="/cgi-bin/playlist.py" method="POST" enctype="multipart/form-data"
+    target="_blank">
+    <table>
+        <tr>
+            <td>CSV times:</td>
+            <td><input type="file" name="csv_file" size="40"> </td>
+            <td><i><a href="#create_csv">.csv file</a> with clip times</i></td>
+        </tr>
+        <tr>
+            <td>Title:</td>
+            <td><input type="text" name="title" value="East of Eden" /> </td>
+        </tr>
+
+        <tr>
+            <td>Movie file:</td>
+            <td>
+                <input type="text" name="movie_path" value="/Users/suzieq/East_of_Eden.m4v" size="45"/>
+            </td>
+            <td>
+                <i>Absolute path to '.m4v' movie</i><br />
+                <!-- <a href="#path_caveat">How to make an m3u for the classroom computer.</a> -->
+            
+            </td>
+        </tr>
+
+        <tr>
+            <td>Clip ordering:</td>
+            <td>
+                <input type="radio" name="clip_order" value="file_order" checked /> As ordered in CSV file <br />
+                <input type="radio" name="clip_order" value="chronological" /> Chronological
+            </td>
+            <!--
+            <td><i>How to order the playlist (chronological will sort clips by start time)</i></td>
+            -->
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <input type="submit" value="Generate playlist" />
+            </td>
+        </tr>
+    </table>
+</form>
+
+<br \>
+
+<h2 id="about">About</h2>
+
+
+<p>The above form will generate a .m3u file that can be used to play film
+clips. The playlist contains named bookmarks that can be clicked to go to a
+specific time in the film. If you open the .m3u file in VLC, then open the
+bookmarks window, you will see a clickable list like in the image below.</p>
+
+<p> <img src="images/bookmarks.png" title="Bookmarks as viewed in VLC" \></p>
+
+<h2 id="Instructions">Instructions</h2>
+
+<h3>For the impatient (quick instructions)</h3>
+<ol>
+    <li>
+        <a href="#create_csv">Create a CSV</a> with desired start time, end time, and titles per clip.
+    </li>
+    <li>
+        Upload your CSV.
+    </li>
+    <li>
+        Give your film's title.
+    </li>
+    <li>
+        Give <a href="#full_path">the absolute path to the movie</a> on
+        whatever computer you want to play this file on.
+    </li>
+    <li>
+        Press "Generate playlist," and open the downloaded file in VLC or your
+        media player of choice.
+    </li>
+    <li>
+        Play the clips by clicking in the <a href=#bookmarks>Bookmarks</a>
+        window.
+    </li>
+</ol>
+
+<h3 id="bookmarks">The bookmarks window</h3>
+
+</p>To open the bookmarks display in VLC:</p>
+<p><b>Windows or GNU/Linux</b>: Playback -&gt; Custom Bookmarks </p>
+<p><b>Mac</b>: Window-&gt; Bookmarks, or &#8984; B </p>
+
+
+<h3 id="full_path">Getting the full path of a file</h3>
+
+<p><b>Windows</b>: On a Windows 7 machine, you can copy the full path of
+any file by right clicking, and selecting 'Copy Address as Text.'</p>
+<p><b>Mac</b>: Right click your file, and select 'Get Info'. The full
+path to the file can be found under the "Where:" field.</p>
+
+<p> Note that if you've been playing the movies directly in your web
+browser, this will not work for you. You need to download the film to
+your hard drive and give the path on your computer. </p>
+
+<h3 id="path_caveat">File not working on a different computer?</h3>
+
+<p> The m3u playlist points to a specific video file. If you try to open
+the playlist on a different computer, it will fail if there's no video at
+the path specified. To get an m3u that will not fail, you will need to
+provide the path of the video on that computer when generating the .m3u.
+
+For example, you can make a playlist that will run on the classroom's
+computer by specifying the movie file path as:
+<pre>/Users/classroom/Desktop/East_of_Eden.m4v</pre>
+(Substitute "East_of_Eden" with your video.) Then, simply download the
+.m4v to the classroom's Desktop, and your playlist should work. </p>
+
+<br />
+
+<h2 id="create_csv">Creating a file with clip times</h2>
+
+<h3>Format</h3>
+<p>Clip times are read from a CSV file formatted like below: <a href="example_times.csv">(Valid example file)</a> </p>
+
+<pre>0:04:17,00:04:52,"MUSIC:Overture fades"
+0:05:02,00:06:38,"MUSIC:Integral to opening scene"
+0:07:53,00:08:11,"GENDER:the timid bar maid"
+0:10:25,00:10:35,"MUSIC:Something off about Kate"
+0:29:00,00:30:30,"MUSIC:Cal visits Kate"</pre>
+
+<p>The first column is the start time of the clip, the second column is
+the end time, and the third column is the desired title. Times are in "hours:minutes:seconds" format. </p>
+
+<p>You can edit this file in plaintext, if you wish. You can also create a
+spreadsheet in Excel, and export it as CSV.</p>
+
+<h3>Creating CSV file in Excel</h3>
+
+<ol>
+    <li>
+        Edit a spreadsheet with the three columns: start time, end time, clip name (do not include a header).
+        <br \>
+        <img src="images/spreadsheet.png" title="Creating clip times in Excel"\>
+    </li>
+    <li>
+        Save your spreadsheet as a CSV with "Save As."
+        <br \>
+        <img src="images/save.png" title="Saving clip times spreadsheet as CSV"\>
+        <br \>
+        <p>Excel will warn you about a few things that happen when
+        converting to CSV. They're all fine, so skip through the
+        warnings.</p>
+    </li>
+</ol>
+
+</body>
+</html>
