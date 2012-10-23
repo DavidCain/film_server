@@ -65,12 +65,12 @@ def make_m3u(clips, title, filmpath):
 
 
 def make_clips(clips, film_title):
+    """ Return the path to a .zip file of film clips. """
     film_path = "/srv/ftp/%s.m4v" % film_title
 
-    base, extension = os.path.splitext(film_path)  # excessive, but an example
+    base, extension = os.path.splitext(film_path)
 
     clip_files = []
-
     for start, (end, clip_name) in clips:
         running_time = str(end - start)  # Will be in HMS
         start = str(start)
@@ -82,23 +82,20 @@ def make_clips(clips, film_title):
         subprocess.check_call(['ffmpeg', '-ss', start, '-t', running_time,
             '-i', film_path, '-acodec', 'copy', '-vcodec', 'copy', outfile])
 
-        #raise Exception("Error creating clip '%s'; contact David." % clip_name)
         clip_files.append(outfile)
 
+    # Return the path to
     fd, zip_path = tempfile.mkstemp()
-    ret_zip(zip_path, clip_files)
+    make_zip(zip_path, clip_files)
     os.close(fd)
-    for line in open(zip_path):
-        print line,
-
-    os.remove(zip_path)
+    return zip_path
 
 
-def ret_zip(zip_fn, paths):
-    zip = zipfile.ZipFile(zip_fn, 'w')
+def make_zip(zip_fn, paths):
+    archive = zipfile.ZipFile(zip_fn, 'w')
     for path in paths:
-        zip.write(path)
-    zip.close()
+        archive.write(path)
+    archive.close()
 
 
 def clean_path(path):
@@ -178,13 +175,26 @@ def main():
         return
 
     # Give the result as downloadable
-    outname = "booxmarks.m3u" if output_type == "playlist" else "clips.zip"
-    print 'Content-Type:text/enriched; filename="%s"' % outname
-    print 'Content-Disposition: attachment; filename="%s"\n' % outname
     if output_type == "playlist":
+        attach_header("bookmarks.m3u")
         make_m3u(clips, film_title, movie_path)
     elif output_type == "clips":
-        make_clips(clips, film_title)
+        try:
+            zip_path = make_clips(clips, film_title)
+        except Exception, msg:
+            html_err(msg)
+            return
+
+        attach_header("clips.zip")
+        for line in open(zip_path):
+            print line,
+
+        os.remove(zip_path)
+
+
+def attach_header(outname):
+    print 'Content-Type:text/enriched; filename="%s"' % outname
+    print 'Content-Disposition: attachment; filename="%s"\n' % outname
 
 
 def text_err(msg):
