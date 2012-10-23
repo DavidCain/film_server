@@ -20,7 +20,6 @@ import os
 import subprocess
 import sys
 import tempfile
-import traceback
 import zipfile
 
 hms = "%H:%M:%S"
@@ -85,13 +84,16 @@ def make_clips(clips, film_title):
 
         outfile = "/clips/%s" % clip_fn + extension
 
-        # Use subprocess for better error handling
-        subprocess.check_call(['ffmpeg', '-ss', start, '-t', running_time,
-            '-i', film_path, '-acodec', 'copy', '-vcodec', 'copy', outfile])
+        cmd = ['ffmpeg', '-ss', start, '-t', running_time, '-i', film_path,
+                '-acodec', 'copy', '-vcodec', 'copy', '-y', outfile]
+        try:
+            subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError, e:
+            text_err("Error code %i:\n\n %s" % (e.returncode, e.output))
 
         clip_files.append(outfile)
 
-    # Return the path to
+    # Return the path to a zip file
     fd, zip_path = tempfile.mkstemp()
     make_zip(zip_path, clip_files)
     os.close(fd)
@@ -147,7 +149,6 @@ def main():
     # Quit if CSV file is empty
     if not (user_csv and user_csv.read()):
         html_err("No CSV file given.")
-        return
     user_csv.seek(0)
 
     # Raise error if path is left as example path
@@ -155,7 +156,6 @@ def main():
             movie_path == "/Users/suzieq/East_of_Eden.m4v")):
         html_err("Playlists require the path to your film.\n"
                 '<a href="/gen_clips.html#full_path">Getting the full path of a file</a>')
-        return
 
     # Hack to force universal line support
     fileno, filename = tempfile.mkstemp()
@@ -169,7 +169,6 @@ def main():
         clip_dict = get_clip_dict(csv_file)
     except CSVError, msg:
         html_err(msg)
-        return
 
     # Sort clips chronologically, if specified
     if clip_order == "chronological":
@@ -179,7 +178,6 @@ def main():
 
     if len(clips) == 0:
         html_err("No clips were found in the CSV file!")
-        return
 
     # Give the result as downloadable
     if output_type == "playlist":
@@ -189,7 +187,7 @@ def main():
         try:
             zip_path = make_clips(clips, film_title)
         except Exception, msg:
-            html_err(msg)
+            text_err(msg)
             return
 
         attach_header("clips.zip")
@@ -208,6 +206,7 @@ def text_err(msg):
     print 'Content-Type:text/plain\n'
     print "Error:\n"
     print msg
+    sys.exit(1)
 
 
 def html_err(msg):
@@ -216,10 +215,8 @@ def html_err(msg):
     print "<h1>Error:</h1>\n"
     print "<p>\n%s\n</p>" % msg
     print "</body>\n</html>"
+    sys.exit(1)
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except:
-        traceback.print_exc(file=sys.stdout)
+    main()
