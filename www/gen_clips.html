@@ -6,7 +6,22 @@
     <meta name="author" content="David Cain" />
     <title></title>
     <link rel="stylesheet" href="wiki.css" type="text/css" />
+
+<script type="text/javascript">
+    <!--
+    function show(obj){
+        obj1 = document.getElementById(obj);
+        obj1.style.display = '';
+    }
+    function hide(obj) {
+        obj1 = document.getElementById(obj);
+        obj1.style.display = 'none';
+    }
+    //-->
+</script>
+
 </head>
+
 <body>
 
 <h1>Film clip generator</h1>
@@ -52,21 +67,18 @@
         <tr>
             <td><b>Desired output</b></td>
             <td>
-                <input type="radio" name="output_type" value="playlist" checked /> .m3u playlist <br />
-                <input type="radio" name="output_type" value="clips" /> Video clip files
+                <input type="radio" name="output_type" value="playlist" onchange="show('path_row')" checked /> .m3u playlist <br />
+                <input type="radio" name="output_type" value="clips"    onchange="hide('path_row')" /> Video clip files
             </td>
-            <!--
-            <td><i>How to order the playlist (chronological will sort clips by start time)</i></td>
-            -->
         </tr>
 
-        <tr>
+        <tr id="path_row">
             <td>Movie file:</td>
             <td>
                 <input type="text" name="movie_path" value="/Users/suzieq/East_of_Eden.m4v" size="45"/>
             </td>
             <td>
-                <i>Absolute path to '.m4v' movie</i><br />
+                <i><a href="#full_path">Absolute path</a> to '.m4v'</i><br />
                 <!-- <a href="#path_caveat">How to make an m3u for the classroom computer.</a> -->
             
             </td>
@@ -81,12 +93,6 @@
     </table>
 
     <br>
-
-    <i> Video-clip generation does not currently include very much error
-        checking, and may result in corrupt zip files if your inputs are
-        not correct. If you have any errors the program does not catch,
-        check your CSV carefully, then contact David if your problems
-        persist. </i>
 
 </form>
 
