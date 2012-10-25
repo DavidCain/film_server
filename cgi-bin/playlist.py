@@ -2,7 +2,7 @@
 
 # Davd Cain
 # RE357
-# 2012-10-23
+# 2012-10-25
 
 """
 A script to make a m3u bookmark playlist (playable in VLC), or .m4v
@@ -43,7 +43,7 @@ def get_clip_dict(csv_file, give_times=False):
         elif len(line) < 3:
             raise CSVError("Fewer than three columns on line %i" % num)
 
-        start, end, name = line
+        start, end, name = [val.strip() for val in line]
         timename = "%s-%s" % (start, end)
         clip_name = "%s - %s" % (timename, name) if give_times else name
 
@@ -129,8 +129,8 @@ def get_time(clip_start):
         try:
             bookmark_time = datetime.strptime(clip_start, ms)
         except ValueError:
-            print "Invalid time format '%s'. Enter time in H:M:S, or M:S" % clip_start
-            raise
+            raise ValueError("Invalid time format '%s'."
+                    "Enter time in H:M:S, or M:S" % clip_start)
 
     return bookmark_time - movie_start
 
