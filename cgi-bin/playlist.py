@@ -142,7 +142,6 @@ def main():
 
     movie_path = form["movie_path"].value
     clip_order = form["clip_order"].value
-    output_type = form["output_type"].value
 
     user_csv = form["csv_file"].file
 
@@ -151,7 +150,13 @@ def main():
         html_err("No CSV file given.")
     user_csv.seek(0)
 
-    # Raise error if path is left as example path
+    # Get output type
+    try:
+        output_type = form["output_type"].value
+    except:
+        html_err("No output format selected.")
+
+    # Raise error if using playlist and path is left as example path
     if (output_type == "playlist" and (not movie_path or
             movie_path == "/Users/suzieq/East_of_Eden.m4v")):
         html_err("Playlists require the path to your film.\n"
