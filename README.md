@@ -9,12 +9,14 @@ work to generate these clips in two downloadable formats.
 
 ### Interface
 
+The main HTML page, and interface to users:
+
 ![Form](https://raw.github.com/DavidCain/film_server/master/interface.png)
 
 ## Installation
 
 The server assumes the existence of several `.m4v` feature-length films
-in `/srv/ftp` (this path can be changed in the cgi script). If video
+in `/srv/ftp/` (this path can be changed in the cgi script). If video
 clips are desired, system calls are made to `ffmpeg` (tested on v.
 0.8.3-4).
 
@@ -24,5 +26,5 @@ clips are desired, system calls are made to `ffmpeg` (tested on v.
 - ffmpeg (for video clips only)
 
 Files in `www` belong in `/var/www/`, or anywhere Apache serves pages.
-`playlist.py` should be stored in `/usr/lib/cgi-bin`, or wherever
+`playlist.py` should be stored in `/usr/lib/cgi-bin/`, or wherever
 cgi-bin scripts are configured to reside.
