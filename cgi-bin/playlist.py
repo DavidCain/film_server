@@ -20,6 +20,7 @@ import os
 import subprocess
 import sys
 import tempfile
+import traceback
 import zipfile
 
 hms = "%H:%M:%S"
@@ -174,6 +175,8 @@ def main():
         clip_dict = get_clip_dict(csv_file)
     except CSVError, msg:
         html_err(msg)
+    except Exception, msg:
+        html_err("Error parsing CSV: %s" % msg)
 
     # Sort clips chronologically, if specified
     if clip_order == "chronological":
@@ -224,4 +227,9 @@ def html_err(msg):
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit:
+        pass
+    except:
+        traceback.print_exc(file=sys.stdout)
