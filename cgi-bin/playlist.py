@@ -26,6 +26,7 @@ import zipfile
 hms = "%H:%M:%S"
 ms = "%M:%S"
 
+film_dir = "/srv/ftp/"
 movie_start = datetime.strptime("00:00:00", hms)
 
 
@@ -71,7 +72,7 @@ def make_m3u(clips, title, filmpath):
 
 def make_clips(clips, film_title):
     """ Return the path to a .zip file of film clips. """
-    film_path = "/srv/ftp/%s.m4v" % film_title
+    film_path = os.path.join(film_dir, "%s.m4v" % film_title)
 
     base, extension = os.path.splitext(film_path)
 
