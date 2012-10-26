@@ -28,3 +28,10 @@ clips are desired, system calls are made to `ffmpeg` (tested on v.
 Files in `www` belong in `/var/www/`, or anywhere Apache serves pages.
 `playlist.py` should be stored in `/usr/lib/cgi-bin/`, or wherever
 cgi-bin scripts are configured to reside.
+
+## Legal
+
+All films used for this project were obtained under the terms of Fair
+Use, for educational purposes only. Copyright laws may be different in
+your country; exercise caution and obey all copyright laws when using
+this software.
