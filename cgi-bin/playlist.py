@@ -7,9 +7,6 @@
 """
 A script to make a m3u bookmark playlist (playable in VLC), or an
 archive of .m4v video clip files.
-
-Note that each bookmark should probably have a value for a "bytes"
-attribute, but it seems to work without it.
 """
 
 from collections import OrderedDict
@@ -32,7 +29,11 @@ movie_start = datetime.strptime("00:00:00", hms)
 
 
 def print_m3u(clips, title, filmpath):
-    """ Print the contents of a .m3u playlist of clips in the film. """
+    """ Print the contents of a .m3u playlist of clips in the film.
+
+    Note that each bookmark should probably have a value for a "bytes"
+    attribute, but it seems to work without it.
+    """
     attach_header("bookmarks.m3u")
 
     print "#EXTM3U"
