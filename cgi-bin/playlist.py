@@ -36,6 +36,7 @@ class CSVError(Exception):
 
 
 def get_clip_dict(csv_file, give_times=False):
+    """ Return a dictionary of clip names with start and end times. """
     clip_dict = OrderedDict()
 
     clips_csv = csv.reader(csv_file)
@@ -58,7 +59,10 @@ def get_clip_dict(csv_file, give_times=False):
     return clip_dict
 
 
-def make_m3u(clips, title, filmpath):
+def print_m3u(clips, title, filmpath):
+    """ Print the contents of a .m3u playlist of clips in the film. """
+    attach_header("bookmarks.m3u")
+
     print "#EXTM3U"
     print "#EXTINF:7061,%s" % title
 
@@ -69,6 +73,20 @@ def make_m3u(clips, title, filmpath):
 
     # Path to file
     print filmpath
+
+
+def print_zip(clips, film_title):
+    """ Print the contents of a .zip file of film clips. """
+    try:
+        zip_file = make_clips(clips, film_title)
+    except Exception, msg:
+        text_err(msg)
+    else:
+        attach_header("clips.zip")
+        for line in zip_file:
+            print line,
+    finally:
+        os.remove(zip_file.name)
 
 
 def make_clips(clips, film_title):
@@ -141,13 +159,12 @@ def get_time(clip_start):
 
 
 def main():
+    """ Read the CGI form, display any errors. Otherwise, give content. """
     form = cgi.FieldStorage()
 
     film_title = form["title"].value
-
     movie_path = form["movie_path"].value
     clip_order = form["clip_order"].value
-
     user_csv = form["csv_file"].file
 
     # Quit if CSV file is empty
@@ -190,20 +207,9 @@ def main():
 
     # Give the result as downloadable
     if output_type == "playlist":
-        attach_header("bookmarks.m3u")
-        make_m3u(clips, film_title, movie_path)
+        print_m3u(clips, film_title, movie_path)
     elif output_type == "clips":
-        try:
-            zip_file = make_clips(clips, film_title)
-        except Exception, msg:
-            text_err(msg)
-            return
-
-        attach_header("clips.zip")
-        for line in zip_file:
-            print line,
-
-        os.remove(zip_file.name)
+        print_zip(clips, film_title)
 
 
 def universal_file(in_file):
