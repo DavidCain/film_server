@@ -5,8 +5,8 @@
 # 2012-10-30
 
 """
-A script to make a m3u bookmark playlist (playable in VLC), or .m4v
-video clip files
+A script to make a m3u bookmark playlist (playable in VLC), or an
+archive of .m4v video clip files.
 
 Note that each bookmark should probably have a value for a "bytes"
 attribute, but it seems to work without it.
@@ -72,7 +72,7 @@ def make_m3u(clips, title, filmpath):
 
 
 def make_clips(clips, film_title):
-    """ Return the path to a .zip file of film clips. """
+    """ Return a .zip file of film clips. """
     film_path = os.path.join(film_dir, "%s.m4v" % film_title)
 
     base, extension = os.path.splitext(film_path)
@@ -96,18 +96,19 @@ def make_clips(clips, film_title):
 
         clip_files.append(outfile)
 
-    # Return the path to a zip file
+    # Zip the clips into an archive, return file handle
+    return make_zip(clip_files)
+
+
+def make_zip(paths):
+    """ Return the handle to a .zip archive of the given files. """
     fd, zip_path = tempfile.mkstemp()
-    make_zip(zip_path, clip_files)
-    os.close(fd)
-    return zip_path
-
-
-def make_zip(zip_fn, paths):
-    archive = zipfile.ZipFile(zip_fn, 'w')
+    archive = zipfile.ZipFile(zip_path, 'w')
     for path in paths:
         archive.write(path)
     archive.close()
+    os.close(fd)
+    return open(zip_path)
 
 
 def clean_path(path):
@@ -193,16 +194,16 @@ def main():
         make_m3u(clips, film_title, movie_path)
     elif output_type == "clips":
         try:
-            zip_path = make_clips(clips, film_title)
+            zip_file = make_clips(clips, film_title)
         except Exception, msg:
             text_err(msg)
             return
 
         attach_header("clips.zip")
-        for line in open(zip_path):
+        for line in zip_file:
             print line,
 
-        os.remove(zip_path)
+        os.remove(zip_file.name)
 
 
 def universal_file(in_file):
