@@ -166,12 +166,7 @@ def main():
         html_err("Playlists require the path to your film.\n"
                 '<a href="/gen_clips.html#full_path">Getting the full path of a file</a>')
 
-    # Hack to force universal line support
-    fileno, filename = tempfile.mkstemp()
-    with open(filename, "w") as newline_file:
-        newline_file.write(user_csv.read())
-    os.close(fileno)
-    csv_file = open(filename, "rU")
+    csv_file = universal_file(user_csv)  # Force universal line support
 
     # Parse CSV, crash if errors
     try:
@@ -180,6 +175,8 @@ def main():
         html_err(msg)
     except Exception, msg:
         html_err("Error parsing CSV: %s" % msg)
+    finally:
+        os.remove(csv_file.name)
 
     # Sort clips chronologically, if specified
     if clip_order == "chronological":
@@ -206,6 +203,19 @@ def main():
             print line,
 
         os.remove(zip_path)
+
+
+def universal_file(in_file):
+    """ Return the handle to a file with universal EOL support.
+
+    (A hack to get around the fact that CGI handles are already open).
+    """
+    fileno, filename = tempfile.mkstemp()
+    with open(filename, "w") as newline_file:
+        for line in in_file:
+            newline_file.write(line)
+    os.close(fileno)
+    return open(filename, "rU")
 
 
 def attach_header(outname):
