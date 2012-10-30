@@ -31,34 +31,6 @@ film_dir = "/srv/ftp/"
 movie_start = datetime.strptime("00:00:00", hms)
 
 
-class CSVError(Exception):
-    pass
-
-
-def get_clip_dict(csv_file, give_times=False):
-    """ Return a dictionary of clip names with start and end times. """
-    clip_dict = OrderedDict()
-
-    clips_csv = csv.reader(csv_file)
-
-    for num, line in enumerate(clips_csv, start=1):
-        if len(line) > 3:
-            raise CSVError("Too many columns on line %i (check commas!)" % num)
-        elif len(line) < 3:
-            raise CSVError("Fewer than three columns on line %i" % num)
-
-        start, end, name = [val.strip() for val in line]
-        timename = "%s-%s" % (start, end)
-        clip_name = "%s - %s" % (timename, name) if give_times else name
-
-        start_time = get_time(start)
-        end_time = get_time(end)
-        if end_time < start_time:
-            raise CSVError("End time of '%s' (line %i) precedes start." % (name, num))
-        clip_dict[start_time] = (end_time, clip_name)
-    return clip_dict
-
-
 def print_m3u(clips, title, filmpath):
     """ Print the contents of a .m3u playlist of clips in the film. """
     attach_header("bookmarks.m3u")
@@ -129,16 +101,32 @@ def make_zip(paths):
     return open(zip_path)
 
 
-def clean_path(path):
-    """ Sanitize the path for sensible names.
+class CSVError(Exception):
+    pass
 
-    It's not to prevent traversals, just to avoid common filename 'gotchas'
-    """
-    path = re.sub("[:/\\\]", "-", path)
-    path = re.sub(" ", "_", path)
-    path = re.sub("[?]", "", path)
 
-    return path
+def get_clip_dict(csv_file, give_times=False):
+    """ Return a dictionary of clip names with start and end times. """
+    clip_dict = OrderedDict()
+
+    clips_csv = csv.reader(csv_file)
+
+    for num, line in enumerate(clips_csv, start=1):
+        if len(line) > 3:
+            raise CSVError("Too many columns on line %i (check commas!)" % num)
+        elif len(line) < 3:
+            raise CSVError("Fewer than three columns on line %i" % num)
+
+        start, end, name = [val.strip() for val in line]
+        timename = "%s-%s" % (start, end)
+        clip_name = "%s - %s" % (timename, name) if give_times else name
+
+        start_time = get_time(start)
+        end_time = get_time(end)
+        if end_time < start_time:
+            raise CSVError("End time of '%s' (line %i) precedes start." % (name, num))
+        clip_dict[start_time] = (end_time, clip_name)
+    return clip_dict
 
 
 def seconds(delta):
@@ -156,6 +144,51 @@ def get_time(clip_start):
                     "Enter time in H:M:S, or M:S" % clip_start)
 
     return bookmark_time - movie_start
+
+
+def clean_path(path):
+    """ Sanitize the path for sensible names.
+
+    It's not to prevent traversals, just to avoid common filename 'gotchas'
+    """
+    path = re.sub("[:/\\\]", "-", path)
+    path = re.sub(" ", "_", path)
+    path = re.sub("[?]", "", path)
+    return path
+
+
+def universal_file(in_file):
+    """ Return the handle to a file with universal EOL support.
+
+    (A hack to get around the fact that CGI handles are already open).
+    """
+    fileno, filename = tempfile.mkstemp()
+    with open(filename, "w") as newline_file:
+        for line in in_file:
+            newline_file.write(line)
+    os.close(fileno)
+    return open(filename, "rU")
+
+
+def attach_header(outname):
+    print 'Content-Type:text/enriched; filename="%s"' % outname
+    print 'Content-Disposition: attachment; filename="%s"\n' % outname
+
+
+def text_err(msg):
+    print 'Content-Type:text/plain\n'
+    print "Error:\n"
+    print msg
+    sys.exit(1)
+
+
+def html_err(msg):
+    print 'Content-Type:text/html\n'
+    print "<html>\n<body>"
+    print "<h1>Error:</h1>\n"
+    print "<p>\n%s\n</p>" % msg
+    print "</body>\n</html>"
+    sys.exit(1)
 
 
 def main():
@@ -210,40 +243,6 @@ def main():
         print_m3u(clips, film_title, movie_path)
     elif output_type == "clips":
         print_zip(clips, film_title)
-
-
-def universal_file(in_file):
-    """ Return the handle to a file with universal EOL support.
-
-    (A hack to get around the fact that CGI handles are already open).
-    """
-    fileno, filename = tempfile.mkstemp()
-    with open(filename, "w") as newline_file:
-        for line in in_file:
-            newline_file.write(line)
-    os.close(fileno)
-    return open(filename, "rU")
-
-
-def attach_header(outname):
-    print 'Content-Type:text/enriched; filename="%s"' % outname
-    print 'Content-Disposition: attachment; filename="%s"\n' % outname
-
-
-def text_err(msg):
-    print 'Content-Type:text/plain\n'
-    print "Error:\n"
-    print msg
-    sys.exit(1)
-
-
-def html_err(msg):
-    print 'Content-Type:text/html\n'
-    print "<html>\n<body>"
-    print "<h1>Error:</h1>\n"
-    print "<p>\n%s\n</p>" % msg
-    print "</body>\n</html>"
-    sys.exit(1)
 
 
 if __name__ == "__main__":
