@@ -2,7 +2,7 @@
 
 # Davd Cain
 # RE357
-# 2012-10-25
+# 2012-10-30
 
 """
 A script to make a m3u bookmark playlist (playable in VLC), or .m4v
@@ -17,6 +17,7 @@ from datetime import datetime
 import cgi
 import csv
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -110,14 +111,15 @@ def make_zip(zip_fn, paths):
 
 
 def clean_path(path):
-    """ Sanitize the path for sensible names. """
-    cleaned = path.replace(":", "-")
-    cleaned = cleaned.replace(" ", "_")
-    cleaned = cleaned.replace("/", "-")
-    cleaned = cleaned.replace("\\", "-")
-    cleaned = cleaned.replace("..", "")
-    cleaned = cleaned.replace("?", "")
-    return cleaned
+    """ Sanitize the path for sensible names.
+
+    It's not to prevent traversals, just to avoid common filename 'gotchas'
+    """
+    path = re.sub("[:/\\\]", "-", path)
+    path = re.sub(" ", "_", path)
+    path = re.sub("[?]", "", path)
+
+    return path
 
 
 def seconds(delta):
