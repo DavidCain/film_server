@@ -2,7 +2,7 @@
 
 # Davd Cain
 # RE357
-# 2012-10-30
+# 2012-12-16
 
 """
 A script to make a m3u bookmark playlist (playable in VLC), or an
@@ -15,6 +15,7 @@ import cgi
 import csv
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -64,6 +65,7 @@ def print_zip(clips, film_title):
 
 def make_clips(clips, film_title):
     """ Return a .zip file of film clips. """
+    temp_clip_dir = tempfile.mkdtemp(prefix=film_title)
     film_path = os.path.join(film_dir, "%s.m4v" % film_title)
 
     base, extension = os.path.splitext(film_path)
@@ -76,7 +78,7 @@ def make_clips(clips, film_title):
         start = str(start)
         clip_fn = clean_path(clip_name)
 
-        outfile = "/clips/%s" % clip_fn + extension
+        outfile = os.path.join(temp_clip_dir, clip_fn + extension)
 
         cmd = ['ffmpeg', '-ss', start, '-t', running_time, '-i', film_path,
                 '-acodec', 'copy', '-vcodec', 'copy', '-y', outfile]
@@ -88,7 +90,9 @@ def make_clips(clips, film_title):
         clip_files.append(outfile)
 
     # Zip the clips into an archive, return file handle
-    return make_zip(clip_files)
+    zip_handle = make_zip(clip_files)
+    shutil.rmtree(temp_clip_dir)
+    return zip_handle
 
 
 def make_zip(paths):
