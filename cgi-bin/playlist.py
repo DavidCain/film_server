@@ -56,7 +56,7 @@ def print_zip(clips, film_title):
     except Exception, msg:
         text_err(msg)
     else:
-        attach_header("clips.zip")
+        attach_header(film_title + "_clips.zip")
         for line in zip_file:
             print line,
     finally:
@@ -90,17 +90,21 @@ def make_clips(clips, film_title):
         clip_files.append(outfile)
 
     # Zip the clips into an archive, return file handle
-    zip_handle = make_zip(clip_files)
+    zip_handle = make_zip(clip_files, film_title + "_clips")
     shutil.rmtree(temp_clip_dir)
     return zip_handle
 
 
-def make_zip(paths):
-    """ Return the handle to a .zip archive of the given files. """
+def make_zip(paths, top_dir="film_clips"):
+    """ Return the handle to a .zip archive of the given files.
+
+    :param top_dir: Directory name to place files in
+    """
     fd, zip_path = tempfile.mkstemp()
     archive = zipfile.ZipFile(zip_path, 'w')
     for path in paths:
-        archive.write(path)
+        arcname = os.path.join(top_dir, os.path.split(path)[1])
+        archive.write(path, arcname)
     archive.close()
     os.close(fd)
     return open(zip_path)
