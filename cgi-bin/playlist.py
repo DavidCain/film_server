@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Davd Cain
+# David Cain
 # RE357
 # 2012-12-16
 
@@ -81,7 +81,7 @@ def make_clips(clips, film_title):
         outfile = os.path.join(temp_clip_dir, clip_fn + extension)
 
         cmd = ['ffmpeg', '-ss', start, '-t', running_time, '-i', film_path,
-                '-acodec', 'copy', '-vcodec', 'copy', '-y', outfile]
+               '-acodec', 'copy', '-vcodec', 'copy', '-y', outfile]
         try:
             subprocess.check_output(cmd, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError, e:
@@ -150,7 +150,7 @@ def get_time(clip_start):
             bookmark_time = datetime.strptime(clip_start, ms)
         except ValueError:
             raise ValueError("Invalid time format '%s'."
-                    "Enter time in H:M:S, or M:S" % clip_start)
+                             "Enter time in H:M:S, or M:S" % clip_start)
 
     return bookmark_time - movie_start
 
@@ -224,7 +224,9 @@ def main():
     if (output_type == "playlist" and (not movie_path or
             movie_path == "/Users/suzieq/East_of_Eden.m4v")):
         html_err("Playlists require the path to your film.\n"
-                '<a href="/gen_clips.html#full_path">Getting the full path of a file</a>')
+                 '<a href="/gen_clips.html#full_path">'
+                 'Getting the full path of a file'
+                 '</a>')
 
     csv_file = universal_file(user_csv)  # Force universal line support
 
