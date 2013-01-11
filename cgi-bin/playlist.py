@@ -60,7 +60,10 @@ def print_zip(clips, film_title):
         for line in zip_file:
             print line,
     finally:
-        os.remove(zip_file.name)
+        try:
+            os.remove(zip_file.name)
+        except OSError:
+            pass  # If make_clips failed, file won't exist
 
 
 def make_clips(clips, film_title):
